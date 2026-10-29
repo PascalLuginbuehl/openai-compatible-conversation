@@ -6,7 +6,7 @@ import logging
 from typing import Any
 
 import openai
-import voluptuous as vol
+import probatio
 
 from homeassistant.config_entries import (
     ConfigEntry,
@@ -50,11 +50,11 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-STEP_USER_DATA_SCHEMA = vol.Schema(
+STEP_USER_DATA_SCHEMA = probatio.Schema(
     {
-        vol.Required("name", default="OpenAI Compatible"): str,
-        vol.Required(CONF_API_KEY): str,
-        vol.Required(CONF_BASE_URL, default=RECOMMENDED_BASE_URL): str,
+        probatio.Required("name", default="OpenAI Compatible"): str,
+        probatio.Required(CONF_API_KEY): str,
+        probatio.Required(CONF_BASE_URL, default=RECOMMENDED_BASE_URL): str,
     }
 )
 
@@ -67,7 +67,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> None:
 
 def agent_schema(
     hass: HomeAssistant, is_new: bool, data: dict[str, Any] | None = None
-) -> vol.Schema:
+) -> probatio.Schema:
     """Return a schema for the agent configuration."""
     if data is None:
         data = {}
@@ -75,7 +75,7 @@ def agent_schema(
     schema_dict = {}
     
     if is_new:
-        schema_dict[vol.Required(CONF_NAME, default=DEFAULT_AGENT_NAME)] = str
+        schema_dict[probatio.Required(CONF_NAME, default=DEFAULT_AGENT_NAME)] = str
 
     hass_apis: list[SelectOptionDict] = [
         SelectOptionDict(label="No control", value="none")
@@ -87,50 +87,50 @@ def agent_schema(
 
     schema_dict.update(
         {
-            vol.Optional(
+            probatio.Optional(
                 CONF_PROMPT,
                 description={"suggested_value": data.get(CONF_PROMPT, llm.DEFAULT_INSTRUCTIONS_PROMPT)},
             ): TemplateSelector(),
-            vol.Optional(
+            probatio.Optional(
                 CONF_LLM_HASS_API,
                 description={"suggested_value": data.get(CONF_LLM_HASS_API)},
                 default="none",
             ): SelectSelector(SelectSelectorConfig(options=hass_apis)),
-            vol.Required(
+            probatio.Required(
                 CONF_CHAT_MODEL,
                 description={"suggested_value": data.get(CONF_CHAT_MODEL)},
                 default=RECOMMENDED_CHAT_MODEL,
             ): str,
-            vol.Required(
+            probatio.Required(
                 CONF_MAX_TOKENS,
                 description={"suggested_value": data.get(CONF_MAX_TOKENS)},
                 default=RECOMMENDED_MAX_TOKENS,
             ): int,
-            vol.Required(
+            probatio.Required(
                 CONF_TOP_P,
                 description={"suggested_value": data.get(CONF_TOP_P)},
                 default=RECOMMENDED_TOP_P,
             ): NumberSelector(NumberSelectorConfig(min=0, max=1, step=0.05)),
-            vol.Required(
+            probatio.Required(
                 CONF_TEMPERATURE,
                 description={"suggested_value": data.get(CONF_TEMPERATURE)},
                 default=RECOMMENDED_TEMPERATURE,
             ): NumberSelector(NumberSelectorConfig(min=0, max=2, step=0.05)),
-            vol.Optional(
+            probatio.Optional(
                 CONF_ENABLE_KV_CACHE_FIX,
                 default=data.get(CONF_ENABLE_KV_CACHE_FIX, False),
             ): BooleanSelector(),
-            vol.Required(
+            probatio.Required(
                 CONF_NO_THINK,
                 default=data.get(CONF_NO_THINK, False)
             ): BooleanSelector(),
-            vol.Required(
+            probatio.Required(
                 CONF_STRIP_THINK_TAGS,
                 default=data.get(CONF_STRIP_THINK_TAGS, False)
             ): BooleanSelector(),
         }
     )
-    return vol.Schema(schema_dict)
+    return probatio.Schema(schema_dict)
 
 
 class OpenAICompatibleConfigFlow(ConfigFlow, domain=DOMAIN):

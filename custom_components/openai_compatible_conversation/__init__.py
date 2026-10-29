@@ -11,7 +11,7 @@ from typing import Any
 
 import httpx
 import openai
-import voluptuous as vol
+import probatio
 
 # --- Импорты из Home Assistant Core ---
 from homeassistant.config_entries import ConfigEntry
@@ -267,16 +267,16 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         DOMAIN,
         SERVICE_MISTRAL_VISION,
         mistral_vision,
-        schema=vol.Schema(
+        schema=probatio.Schema(
             {
-                vol.Required("config_entry"): selector.ConfigEntrySelector(
+                probatio.Required("config_entry"): selector.ConfigEntrySelector(
                     {"integration": DOMAIN}
                 ),
-                vol.Required("prompt"): cv.string,
-                vol.Required("image_path"): cv.string,
-                vol.Optional("model"): cv.string,
-                vol.Optional("max_tokens", default=RECOMMENDED_MAX_TOKENS): vol.All(
-                    vol.Coerce(int), vol.Range(min=50, max=1000)
+                probatio.Required("prompt"): cv.string,
+                probatio.Required("image_path"): cv.string,
+                probatio.Optional("model"): cv.string,
+                probatio.Optional("max_tokens", default=RECOMMENDED_MAX_TOKENS): probatio.All(
+                    probatio.Coerce(int), probatio.Range(min=50, max=1000)
                 ),
             }
         ),
@@ -292,9 +292,9 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         DOMAIN,
         SERVICE_WEB_SEARCH,
         handle_web_search,
-        schema=vol.Schema({
-            vol.Required("config_entry"): selector.ConfigEntrySelector({"integration": DOMAIN}),
-            vol.Required("prompt"): cv.string,
+        schema=probatio.Schema({
+            probatio.Required("config_entry"): selector.ConfigEntrySelector({"integration": DOMAIN}),
+            probatio.Required("prompt"): cv.string,
         }),
         supports_response=SupportsResponse.ONLY,
     )
@@ -414,15 +414,15 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         DOMAIN,
         SERVICE_STREAM_RESPONSE,
         handle_stream_response,
-        schema=vol.Schema(
-            vol.All(
+        schema=probatio.Schema(
+            probatio.All(
                 {
-                    vol.Optional("agent_entity_id"): cv.entity_id,
-                    vol.Required("prompt"): cv.string,
-                    vol.Optional("conversation_id"): cv.string,
-                    vol.Optional("device_id"): cv.ensure_list,
-                    vol.Optional("area_id"): cv.ensure_list,
-                    vol.Optional("entity_id"): cv.entity_ids,
+                    probatio.Optional("agent_entity_id"): cv.entity_id,
+                    probatio.Required("prompt"): cv.string,
+                    probatio.Optional("conversation_id"): cv.string,
+                    probatio.Optional("device_id"): cv.ensure_list,
+                    probatio.Optional("area_id"): cv.ensure_list,
+                    probatio.Optional("entity_id"): cv.entity_ids,
                 }
             )
         ),
@@ -531,17 +531,17 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         DOMAIN,
         SERVICE_GENERATE_STRUCTURED,
         generate_structured_data,
-        schema=vol.Schema(
+        schema=probatio.Schema(
             {
-                vol.Required("config_entry"): selector.ConfigEntrySelector(
+                probatio.Required("config_entry"): selector.ConfigEntrySelector(
                     {"integration": DOMAIN}
                 ),
-                vol.Required("prompt"): cv.string,
-                vol.Optional("image_path"): cv.string,
-                vol.Required("json_schema"): dict,
-                vol.Optional("model"): cv.string,
-                vol.Optional("max_tokens"): cv.positive_int,
-                vol.Optional("temperature"): vol.Coerce(float),
+                probatio.Required("prompt"): cv.string,
+                probatio.Optional("image_path"): cv.string,
+                probatio.Required("json_schema"): dict,
+                probatio.Optional("model"): cv.string,
+                probatio.Optional("max_tokens"): cv.positive_int,
+                probatio.Optional("temperature"): probatio.Coerce(float),
             }
         ),
         supports_response=SupportsResponse.ONLY,

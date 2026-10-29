@@ -24,7 +24,7 @@ from openai.types.chat.chat_completion_message_function_tool_call_param import (
     Function,
 )
 from openai.types.shared_params import FunctionDefinition
-from voluptuous_openapi import convert
+import probatio
 
 from homeassistant.components import conversation
 from homeassistant.config_entries import ConfigEntry, ConfigSubentry
@@ -87,7 +87,11 @@ def _format_tool(
     """Format tool specification."""
     tool_spec = FunctionDefinition(
         name=tool.name,
-        parameters=convert(tool.parameters, custom_serializer=custom_serializer),
+        parameters=probatio.to_openapi(
+            tool.parameters,
+            custom_serializer=custom_serializer,
+            openapi_version="3.1.0",
+        ),
     )
     if tool.description:
         tool_spec["description"] = tool.description
