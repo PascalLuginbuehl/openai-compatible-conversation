@@ -33,6 +33,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import device_registry as dr, llm
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.json import json_dumps
 
 if TYPE_CHECKING:
     from . import OpenAICompatibleConfigEntry
@@ -128,7 +129,9 @@ def _convert_content_to_param(
         return ChatCompletionToolMessageParam(
             role="tool",
             tool_call_id=get_mistral_id(content.tool_call_id),
-            content=json.dumps(content.result),
+            content=json_dumps(
+                {"data": content.result.data, "error": content.result.error}
+            ),
         )
 
     if content.role in ("user", "system"):
