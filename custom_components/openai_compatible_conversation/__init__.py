@@ -566,7 +566,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: OpenAICompatibleConfigEn
     _ = await hass.async_add_executor_job(client.platform_headers)
 
     try:
-        await hass.async_add_executor_job(client.with_options(timeout=10.0).models.list)
+        await client.models.list(timeout=10.0)
     except openai.AuthenticationError as err:
         LOGGER.error("Invalid API key: %s", err)
         return False
