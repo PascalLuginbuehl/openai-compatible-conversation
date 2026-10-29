@@ -128,7 +128,7 @@ def _convert_content_to_param(
         return ChatCompletionToolMessageParam(
             role="tool",
             tool_call_id=get_mistral_id(content.tool_call_id),
-            content=json.dumps(content.tool_result),
+            content=json.dumps(content.result),
         )
 
     if content.role in ("user", "system"):

@@ -18,6 +18,7 @@ from homeassistant.config_entries import (
 from homeassistant.const import CONF_API_KEY, CONF_LLM_HASS_API
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import llm
+from homeassistant.helpers.httpx_client import get_async_client
 from homeassistant.helpers.selector import (
     BooleanSelector,
     NumberSelector,
@@ -61,8 +62,12 @@ STEP_USER_DATA_SCHEMA = probatio.Schema(
 
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> None:
     """Validate the user input allows us to connect."""
-    client = openai.AsyncOpenAI(api_key=data[CONF_API_KEY], base_url=data[CONF_BASE_URL])
-    await hass.async_add_executor_job(client.with_options(timeout=10.0).models.list)
+    client = openai.AsyncOpenAI(
+        api_key=data[CONF_API_KEY],
+        base_url=data[CONF_BASE_URL],
+        http_client=get_async_client(hass),
+    )
+    await client.models.list(timeout=10.0)
 
 
 def agent_schema(
